@@ -1,4 +1,4 @@
-const makeButton = (container, attributes, children) => {
+export const makeButton = (container, attributes, children) => {
     const button = container.createElement("button");
 
     Object.entries(attributes).forEach(([attrName, attrValue]) => {
@@ -10,4 +10,3 @@ const makeButton = (container, attributes, children) => {
     return button;
 }
 
-export default makeButton;
