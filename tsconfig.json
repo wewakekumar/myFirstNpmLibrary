@@ -6,7 +6,7 @@
         "jsx": "react-jsx",
         "lib": ["DOM", "ES2015"],
         "typeRoots": ["./types", "./node_modules/@types/**/*"],
-        "types": ["node", "webpack-env"],
+        "types": ["node"],
         "diagnostics": false,
         "module": "ESNext",
         "moduleResolution": "Node",
