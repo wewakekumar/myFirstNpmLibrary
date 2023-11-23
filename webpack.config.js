@@ -1,29 +1,32 @@
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 
+const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
+
 module.exports = () => {
   return {
-    entry: "./index.jsx",
+    entry: "./index.tsx",
     mode: "development",
-    resolve: { extensions: [".jsx", ".js"] },
+    resolve: { extensions: [".tsx", ".ts", ".jsx", ".js"] },
     module: {
       rules: [
         {
-          test: "/.css$/",
+          test: /\.(sa|sc|c)ss$/,
           exclude: /node_modules/,
-          use: ["style-loader", "css-loader"],
+          use: [ MiniCSSExtractPlugin.loader, "css-loader", "sass-loader"],
         },
         {
-          test: /\.?jsx?$/,
+          test: /\.[jt]sx?$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader",
+            loader: "esbuild-loader",
             options: {
-              presets: ["@babel/preset-env", ["@babel/preset-react", {"runtime": "automatic"}]],
+              loader: "tsx",
+              target: "es2015"
             },
           },
         },
       ],
     },
-    plugins: [new HTMLWebpackPlugin({ template: "./public/index.html" })],
+    plugins: [new HTMLWebpackPlugin({ template: "./public/index.html" }), new MiniCSSExtractPlugin()],
   };
 };
