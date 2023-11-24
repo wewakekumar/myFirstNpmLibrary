@@ -2,7 +2,7 @@
   "name": "@wewakekumar/myfirstnpmlibrary",
   "version": "1.0.1",
   "description": "My first npm library",
-  "main": "src/Components/index.ts",
+  "main": "lib/Components/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server",
@@ -21,6 +21,7 @@
     "@babel/core": "^7.23.3",
     "@babel/preset-env": "^7.23.3",
     "@babel/preset-react": "^7.23.3",
+    "@types/css-modules": "^1.0.5",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "css-loader": "^6.8.1",
