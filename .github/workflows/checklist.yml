@@ -26,6 +26,7 @@ jobs:
         with:
           script: |
             const prDescription = context.payload.pull_request.body || ""
+            console.log("#pr", prDescription)
             const checked = []
             const unchecked = []
             const lines = prDescription.split('\n')
