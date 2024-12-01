@@ -42,38 +42,16 @@ jobs:
       - name: Self-review
         if: |
           github.event.pull_request.draft == false &&
-          contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code and added `AI-PR-Review` label.')
+          contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code.')
         uses: actions/github-script@v7
         with:
           script: |
             core.setFailed('Please self-review the code and address AI-PR-Review comments before requesting a review.')
 
-      - name: GraphQL
-        if: |
-          github.event.pull_request.draft == false &&
-          contains(github.event.pull_request.labels.*.name, 'has-graphql-changes') &&
-          contains(needs.detect.outputs.unchecked, 'This PR has GraphQL changes. Related GraphQL changes have been deployed to prod (if applicable).')
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.setFailed('👋 Looks like your PR contains GraphQL changes. Please deploy any corresponding frontend-graphql changes to prod and update the Checklist in PR description.')
-
-      - name: Changeset
-        if: |
-          github.event.workflow_run.conclusion == 'success' &&
-          github.event.pull_request.draft == false &&
-          !(contains(github.event.pull_request.labels.*.name, 'changeset-not-applicable') ||
-          contains(github.event.pull_request.labels.*.name, 'changeset-added'))
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.setFailed('Please add changeset or add the changeset-not-applicable label to the PR.')
-
       - name: Detailed changes
         if: |
           github.event.pull_request.draft == false &&
-          contains(github.event.pull_request.labels.*.name, 'changeset-added') &&
-          contains(needs.detect.outputs.unchecked, 'Detailed description of the changes added directly to the changeset.')
+          contains(needs.detect.outputs.unchecked, 'I have followed the standard coding guidelines.')
         uses: actions/github-script@v7
         with:
           script: |
