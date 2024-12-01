@@ -42,8 +42,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            echo "Owner = ${{gitub.repository}}"
             core.setFailed('Please self-review the code and update the Checklist in PR description.')
-            echo gitub.repository
 
       - name: Followed standard coding guidelines
         if: |
