@@ -46,6 +46,11 @@ jobs:
               }
             }
 
+            if (checked.length > 0) {
+              console.log("Checked: ", checked);
+            }
+
             if (unchecked.length > 0) {
+              console.log("Unchecked: ", unchecked);
               core.setFailed('Please follow the checklists and update the checklist.');
             }
