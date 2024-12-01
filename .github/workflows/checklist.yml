@@ -9,51 +9,46 @@ on:
       - synchronize
       - ready_for_review
       - labeled
-  workflow_run:
-    workflows: ['Labeler']
-    types:
-      - completed
 
 jobs:
   detect:
-    name: Detect
+    name: Detect and verify checklists
     runs-on: ubuntu-latest
-    outputs:
-      checked: ${{ steps.detect.outputs.checked }}
-      unchecked: ${{ steps.detect.outputs.unchecked }}
-
+    if: github.event.pull_request.draft == false
     steps:
       - name: Checkbox Trigger
         id: detect
-        uses: karlderkaefer/github-action-checkbox-trigger@v1
-        with:
-          github-token: ${{ github.token }}
-          action: detect
-      - name: List changes
-        run: |
-          echo "checked=${{ steps.detect.outputs.checked }}"
-          echo "unchecked=${{ steps.detect.outputs.unchecked }}"
-
-  verify:
-    name: Verify
-    needs: [detect]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Self-review
-        if: |
-          github.event.pull_request.draft == false &&
-          contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code.')
         uses: actions/github-script@v7
         with:
           script: |
-            core.setFailed('Please self-review the code and address AI-PR-Review comments before requesting a review.')
+            const prDescription = context.payload.pull_request.body || "";
 
-      - name: Detailed changes
-        if: |
-          github.event.pull_request.draft == false &&
-          contains(needs.detect.outputs.unchecked, 'I have followed the standard coding guidelines.')
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.setFailed('Please add a detailed description of the changes directly to the changeset, mentioning any important points the sdk users should take note of.')
+            const checked = [];
+            const unchecked = [];
+            
+            const lines = prDescription.split('\n');
+            let isChecklist = false;
+            for (const line of lines) {
+              if (line.includes("Checklist start")) {
+                isChecklist = true;
+              }
+              if (line.includes("Checklist end")) {
+                isChecklist = false;
+              }
+              
+              if (isChecklist && line.startsWith('- [x]')) {
+                checked.push(line.substring(6).trim());
+              }
+              if (isChecklist && line.startsWith('- [ ]') && isChecklist) {
+                unchecked.push(line.substring(6).trim());
+              }
+            }
 
+            if (checked.length > 0) {
+              console.log("Checked: ", checked);
+            }
+
+            if (unchecked.length > 0) {
+              console.log("Unchecked: ", unchecked);
+              core.setFailed('Please follow the checklists and update the checklist.');
+            }
