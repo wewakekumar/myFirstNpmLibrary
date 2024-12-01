@@ -62,11 +62,10 @@ jobs:
     if: github.event.pull_request.draft == false
     steps:
       - name: Verifying checklists
-        if: needs.detect.outputs.unchecked.length
         uses: actions/github-script@v7
         with:
           script: |
             const uncheckedChecklist = needs.detect.outputs.unchecked;
-            console.log("#unchec", uncheckedChecklist);
+            console.log("#unchec", uncheckedChecklist, uncheckedChecklist.length);
             core.setFailed('Please update the Checklist in PR description.')
 
