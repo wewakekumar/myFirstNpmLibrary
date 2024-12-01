@@ -32,12 +32,18 @@ jobs:
             const lines = prDescription.split('\n')
             let isChecklist = false;
             for (const line of lines) {
-              console.log("#line", line);
-              if (line.startsWith('- [x]')) {
+              if (line.includes("Checklist start") {
+                isChecklist = true;
+              }
+              if (line.includes("Checklist end") {
+                isChecklist = false;
+              }
+              
+              if (isChecklist && line.startsWith('- [x]')) {
                 checked.push(line.substring(6).trim())
                 core.info(`Found checked box: ${line}`)
               }
-              if (line.startsWith('- [ ]')) {
+              if (isChecklist && line.startsWith('- [ ]') && isChecklist) {
                 unchecked.push(line.substring(6).trim())
                 core.info(`Found unchecked box: ${line}`)
               }
@@ -55,17 +61,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
     steps:
-      - name: Self-review
-        if: contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code.')
+      - name: Verifying checklists
+        if: needs.detect.outputs.unchecked.length
         uses: actions/github-script@v7
         with:
           script: |
-            core.setFailed('Please self-review the code and update the Checklist in PR description.')
-
-      - name: Followed standard coding guidelines
-        if: contains(needs.detect.outputs.unchecked, 'I have followed the standard coding guidelines.')
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.setFailed('Please follow the standard coding guidelines and update the Checklist in PR description.')
+            const uncheckedChecklist = needs.detect.outputs.unchecked;
+            console.log("#unchec", uncheckedChecklist);
+            core.setFailed('Please update the Checklist in PR description.')
 
