@@ -26,8 +26,8 @@ jobs:
           script: |
             console.log("pr body", context.payload.pull_request.body)
             const prBody = context.payload.pull_request.body || ""
-            const checked: string[] = []
-            const unchecked: string[] = []
+            const checked = []
+            const unchecked = []
             const lines = prDescription.split('\n')
             core.setOutput('checked', checked.join(','))
             core.setOutput('unchecked', unchecked.join(','))
