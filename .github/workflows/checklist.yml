@@ -15,10 +15,6 @@ jobs:
     name: Detect and verify checklists
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    outputs:
-      checked: ${{ steps.detect.outputs.checked }}
-      unchecked: ${{ steps.detect.outputs.unchecked }}
-
     steps:
       - name: Checkbox Trigger
         id: detect
@@ -49,17 +45,7 @@ jobs:
                 core.info(`Found unchecked box: ${line}`);
               }
             }
-            core.setOutput('checked', checked.join(','));
-            core.setOutput('unchecked', unchecked.join(','));
-      - name: List changes
-        run: |
-          echo "checked=${{ steps.detect.outputs.checked }}"
-          echo "unchecked=${{ steps.detect.outputs.unchecked }}"
-      - name: Verifying checklists
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const uncheckedChecklist = steps.detect.outputs.unchecked;
-            console.log("#unchec", uncheckedChecklist, uncheckedChecklist.length);
-            core.setFailed('Please update the Checklist in PR description.')
 
+            if (unchecked.length > 0) {
+              core.setFailed('Please follow the checklists and update the checklist.');
+            }
