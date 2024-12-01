@@ -25,10 +25,20 @@ jobs:
         with:
           script: |
             console.log("pr body", context.payload.pull_request.body)
-            const prBody = context.payload.pull_request.body || ""
+            const prDescription = context.payload.pull_request.body || ""
             const checked = []
             const unchecked = []
             const lines = prDescription.split('\n')
+            for (const line of lines) {
+              if (line.startsWith('- [x]')) {
+                checked.push(line.substring(6).trim())
+                core.info(`Found checked box: ${line}`)
+              }
+              if (line.startsWith('- [ ]')) {
+                unchecked.push(line.substring(6).trim())
+                core.info(`Found unchecked box: ${line}`)
+              }
+            }
             core.setOutput('checked', checked.join(','))
             core.setOutput('unchecked', unchecked.join(','))
       - name: List changes
