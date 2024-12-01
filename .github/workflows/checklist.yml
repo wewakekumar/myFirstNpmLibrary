@@ -32,10 +32,10 @@ jobs:
             const lines = prDescription.split('\n')
             let isChecklist = false;
             for (const line of lines) {
-              if (line.includes("Checklist start") {
+              if (line.includes("Checklist start")) {
                 isChecklist = true;
               }
-              if (line.includes("Checklist end") {
+              if (line.includes("Checklist end")) {
                 isChecklist = false;
               }
               
