@@ -30,7 +30,9 @@ jobs:
             const checked = []
             const unchecked = []
             const lines = prDescription.split('\n')
+            let isChecklist = false;
             for (const line of lines) {
+              console.log("#line", line);
               if (line.startsWith('- [x]')) {
                 checked.push(line.substring(6).trim())
                 core.info(`Found checked box: ${line}`)
