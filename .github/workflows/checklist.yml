@@ -17,7 +17,7 @@ on:
 jobs:
   detect:
     name: Detect
-    runs-on: self-hosted
+    runs-on: ubuntu@latest
     outputs:
       checked: ${{ steps.detect.outputs.checked }}
       unchecked: ${{ steps.detect.outputs.unchecked }}
@@ -37,7 +37,7 @@ jobs:
   verify:
     name: Verify
     needs: [detect]
-    runs-on: self-hosted
+    runs-on: ubuntu@latest
     steps:
       - name: Self-review
         if: |
