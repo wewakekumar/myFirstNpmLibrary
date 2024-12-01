@@ -9,10 +9,6 @@ on:
       - synchronize
       - ready_for_review
       - labeled
-  workflow_run:
-    workflows: ['Labeler']
-    types:
-      - completed
 
 jobs:
   detect:
