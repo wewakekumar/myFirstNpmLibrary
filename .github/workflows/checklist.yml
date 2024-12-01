@@ -1,0 +1,59 @@
+name: Checklist
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+      - ready_for_review
+      - labeled
+  workflow_run:
+    workflows: ['Labeler']
+    types:
+      - completed
+
+jobs:
+  detect:
+    name: Detect
+    runs-on: ubuntu-latest
+    outputs:
+      checked: ${{ steps.detect.outputs.checked }}
+      unchecked: ${{ steps.detect.outputs.unchecked }}
+
+    steps:
+      - name: Checkbox Trigger
+        id: detect
+        uses: karlderkaefer/github-action-checkbox-trigger@v1
+        with:
+          github-token: ${{ github.token }}
+          action: detect
+      - name: List changes
+        run: |
+          echo "checked=${{ steps.detect.outputs.checked }}"
+          echo "unchecked=${{ steps.detect.outputs.unchecked }}"
+
+  verify:
+    name: Verify
+    needs: [detect]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Self-review
+        if: |
+          github.event.pull_request.draft == false &&
+          contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code.')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.setFailed('Please self-review the code and address AI-PR-Review comments before requesting a review.')
+
+      - name: Detailed changes
+        if: |
+          github.event.pull_request.draft == false &&
+          contains(needs.detect.outputs.unchecked, 'I have followed the standard coding guidelines.')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.setFailed('Please add a detailed description of the changes directly to the changeset, mentioning any important points the sdk users should take note of.')
+
