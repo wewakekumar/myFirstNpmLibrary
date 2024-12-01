@@ -38,11 +38,9 @@ jobs:
               
               if (isChecklist && line.startsWith('- [x]')) {
                 checked.push(line.substring(6).trim());
-                core.info(`Found checked box: ${line}`);
               }
               if (isChecklist && line.startsWith('- [ ]') && isChecklist) {
                 unchecked.push(line.substring(6).trim());
-                core.info(`Found unchecked box: ${line}`);
               }
             }
 
