@@ -43,6 +43,7 @@ jobs:
         with:
           script: |
             core.setFailed('Please self-review the code and update the Checklist in PR description.')
+            echo gitub.repository
 
       - name: Followed standard coding guidelines
         if: |
