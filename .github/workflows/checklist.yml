@@ -21,10 +21,25 @@ jobs:
     steps:
       - name: Checkbox Trigger
         id: detect
-        uses: karlderkaefer/github-action-checkbox-trigger@v1
+        uses: actions/github-script@v7
         with:
-          github-token: ${{ github.token }}
-          action: detect
+          script: |
+            const prBody = context.payload.pull_request.body
+            const checked: string[] = []
+            const unchecked: string[] = []
+            const lines = prDescription.split('\n')
+            for (const line of lines) {
+              if (line.startsWith('- [x]')) {
+                checked.push(line.substring(6).trim())
+                core.info(`Found checked box: ${line}`)
+              }
+              if (line.startsWith('- [ ]')) {
+                unchecked.push(line.substring(6).trim())
+                core.info(`Found unchecked box: ${line}`)
+              }
+            }
+            core.setOutput('checked', checked.join(','))
+            core.setOutput('unchecked', unchecked.join(','))
       - name: List changes
         run: |
           echo "checked=${{ steps.detect.outputs.checked }}"
