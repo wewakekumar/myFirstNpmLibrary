@@ -42,7 +42,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            echo "Owner = ${{context.repository_owner}}"
+            console.log("#context", context)
             core.setFailed('Please self-review the code and update the Checklist in PR description.')
 
       - name: Followed standard coding guidelines
