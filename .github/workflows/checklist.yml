@@ -14,6 +14,7 @@ jobs:
   detect:
     name: Detect
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     outputs:
       checked: ${{ steps.detect.outputs.checked }}
       unchecked: ${{ steps.detect.outputs.unchecked }}
@@ -50,20 +51,17 @@ jobs:
     name: Verify
     needs: [detect]
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
       - name: Self-review
-        if: |
-          github.event.pull_request.draft == false &&
-          contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code.')
+        if: contains(needs.detect.outputs.unchecked, 'I have self-reviewed the code.')
         uses: actions/github-script@v7
         with:
           script: |
             core.setFailed('Please self-review the code and update the Checklist in PR description.')
 
       - name: Followed standard coding guidelines
-        if: |
-          github.event.pull_request.draft == false &&
-          contains(needs.detect.outputs.unchecked, 'I have followed the standard coding guidelines.')
+        if: contains(needs.detect.outputs.unchecked, 'I have followed the standard coding guidelines.')
         uses: actions/github-script@v7
         with:
           script: |
