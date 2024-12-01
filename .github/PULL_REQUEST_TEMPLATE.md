@@ -20,5 +20,9 @@ Please delete options that are not relevant.
 
 # Checklist:
 
+[//] (Checklist start)
+
 - [ ] I have followes the standard coding guidelines.
 - [ ] I have self reviewed the code.
+
+[//] (Checklist end)
