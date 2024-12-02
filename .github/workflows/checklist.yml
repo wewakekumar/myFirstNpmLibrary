@@ -19,7 +19,7 @@ jobs:
       - name: Test
         id: test
         run: |
-          echo github.head_ref
+          echo github.head_ref ${github.head_ref}
       - name: Checkbox Trigger
         id: detect
         uses: actions/github-script@v7
