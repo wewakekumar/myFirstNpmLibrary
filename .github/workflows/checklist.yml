@@ -53,6 +53,13 @@ jobs:
             if (unchecked.length > 0) {
               console.log("Unchecked: ", unchecked);
               console.log("#context", context);
+              const issues = await github.rest.issues.get({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              })
+
+              console.log("#issues", issues);
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
