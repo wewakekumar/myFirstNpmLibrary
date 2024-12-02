@@ -58,9 +58,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '
-                  > [!Error]
-                  > You have some checklists pending. Please complete them and update the checklist.'
+                body: '> [!Error] > You have some checklists pending. Please complete them and update the checklist.'
               })
               core.setFailed('Please follow the checklists and update the checklist.');
             }
