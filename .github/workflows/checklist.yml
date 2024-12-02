@@ -50,14 +50,12 @@ jobs:
 
             if (unchecked.length > 0) {
               console.log("Unchecked: ", unchecked);
-              # let fs = require('fs');
-              # let issue_number = Number(fs.readFileSync('./pr_number'));
-              # await github.rest.issues.createComment({
-              #   owner: context.repo.owner,
-              #   repo: context.repo.repo,
-              #   issue_number: issue_number,
-              #   body: 'Thank you for the PR!'
-              # });
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '👋 Thanks for reporting!'
+              })
               console.log("#context", context);
               core.setFailed('Please follow the checklists and update the checklist.');
             }
