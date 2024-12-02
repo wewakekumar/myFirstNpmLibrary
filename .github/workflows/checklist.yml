@@ -23,6 +23,8 @@ jobs:
           script: |
             const prDescription = context.payload.pull_request.body || "";
 
+            console.log("#context", context);
+
             const checked = [];
             const unchecked = [];
             
