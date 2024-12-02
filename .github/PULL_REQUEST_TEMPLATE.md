@@ -20,9 +20,10 @@ Please delete options that are not relevant.
 
 # Checklist:
 
-[//] (Checklist start)
+<!-- Checklist start -->
 
 - [ ] I have followes the standard coding guidelines.
 - [ ] I have self reviewed the code.
+- [ ] QA signoff done by (Please add QA name or tag QA)
 
-[//] (Checklist end)
+<!-- Checklist start -->
