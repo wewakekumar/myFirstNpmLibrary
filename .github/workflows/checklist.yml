@@ -24,7 +24,6 @@ jobs:
         id: detect
         uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const prDescription = context.payload.pull_request.body || "";
 
@@ -61,6 +60,5 @@ jobs:
                 repo: context.repo.repo,
                 body: '👋 Thanks for reporting!'
               })
-              console.log("#context", context);
               core.setFailed('Please follow the checklists and update the checklist.');
             }
