@@ -15,9 +15,7 @@ jobs:
     name: Detect and verify checklists
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       pull-requests: write
-      repository-projects: write
     if: github.event.pull_request.draft == false
     steps:
       - name: Checkbox Trigger
