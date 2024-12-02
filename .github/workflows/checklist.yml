@@ -14,7 +14,7 @@ jobs:
   detect:
     name: Detect and verify checklists
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false && ( github.head_ref == 'develop' || github.head_ref == 'main' )
     steps:
       - name: Checkbox Trigger
         id: detect
