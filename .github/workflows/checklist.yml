@@ -14,7 +14,9 @@ jobs:
   detect:
     name: Detect and verify checklists
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false && ( github.base_ref == 'develop' || github.base_ref == 'main' )
+    permissions:
+      pull-requests: write
+    if: github.event.pull_request.draft == false
     steps:
       - name: Checkbox Trigger
         id: detect
@@ -50,13 +52,20 @@ jobs:
 
             if (unchecked.length > 0) {
               console.log("Unchecked: ", unchecked);
-              let fs = require('fs');
-              let issue_number = Number(fs.readFileSync('./pr_number'));
-              await github.rest.issues.createComment({
+              
+              const issues = await github.rest.issues.get({
+                issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: issue_number,
-                body: 'Thank you for the PR!'
-              });
+              })
+
+              const issueId = issues.data.id;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `> [!CAUTION] \n > You have [some checklists pending](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${context.issue.number}#issue-${issueId}). Please complete them and update the checklist.`
+              })
               core.setFailed('Please follow the checklists and update the checklist.');
             }
