@@ -65,7 +65,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `> [!CAUTION] \n > You have [some checklists pending](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${context.issue.numbe}#issue-${issueId}). Please complete them and update the checklist.`
+                body: `> [!CAUTION] \n > You have [some checklists pending](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${context.issue.number}#issue-${issueId}). Please complete them and update the checklist.`
               })
               core.setFailed('Please follow the checklists and update the checklist.');
             }
