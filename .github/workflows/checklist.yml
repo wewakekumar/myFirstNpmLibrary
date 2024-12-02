@@ -52,6 +52,7 @@ jobs:
 
             if (unchecked.length > 0) {
               console.log("Unchecked: ", unchecked);
+              console.log("#context", context);
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
