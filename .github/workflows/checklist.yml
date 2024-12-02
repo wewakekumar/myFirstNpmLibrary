@@ -9,6 +9,10 @@ on:
       - synchronize
       - ready_for_review
       - labeled
+    branches:
+      - main
+      - master
+      - develop
 
 jobs:
   detect:
