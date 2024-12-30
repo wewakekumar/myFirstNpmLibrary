@@ -22,9 +22,7 @@ jobs:
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
-
-            console.log("#prs", prDescription);
-
+            
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
               headers: {
@@ -43,4 +41,4 @@ jobs:
                 const assignee = jsonText.fields.assignee.emailAddress;
                 console.log("#assignee", assignee);
               })
-              .catch(err => console.error(err));
+              .catch(err => console.error("#error", err));
