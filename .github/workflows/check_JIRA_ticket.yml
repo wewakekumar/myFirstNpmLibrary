@@ -19,6 +19,8 @@ jobs:
       - name: Detect JIRA
         id: detect
         uses: actions/github-script@v7
+        env:
+          JIRA_PAT: ${{ secrets.JIRA_PAT }}
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
@@ -26,7 +28,7 @@ jobs:
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
               headers: {
-                'Authorization': `Basic ${Buffer.from(secrets.JIRA_PAT).toString('base64')}`,
+                'Authorization': `Basic ${Buffer.from(JIRA_PAT).toString('base64')}`,
                 'Accept': 'application/json'
               }
             })
