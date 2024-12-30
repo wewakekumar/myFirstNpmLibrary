@@ -20,7 +20,7 @@ jobs:
         id: detect
         uses: actions/github-script@v7
         env:
-          JIRA_PAT: ${{ secrets.JIRA_PAT }}
+          JIRA_PAT: '1234'
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
