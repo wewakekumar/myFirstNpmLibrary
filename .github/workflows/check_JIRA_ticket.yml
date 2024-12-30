@@ -28,7 +28,7 @@ jobs:
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
               headers: {
-                'Authorization': `Basic ${Buffer.from(JIRA_PAT).toString('base64')}`,
+                'Authorization': `Basic ${Buffer.from(process.env.JIRA_PAT).toString('base64')}`,
                 'Accept': 'application/json'
               }
             })
