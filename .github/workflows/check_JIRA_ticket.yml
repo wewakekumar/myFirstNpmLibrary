@@ -22,6 +22,8 @@ jobs:
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
+
+            console.log("#${{secrets.JIRA_PAT}}", ${{secrets.JIRA_PAT}});
             
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
