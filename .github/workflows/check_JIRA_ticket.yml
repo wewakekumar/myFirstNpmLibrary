@@ -24,11 +24,15 @@ jobs:
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
+
+            const JIRA_TOKEN = `vivekrajwe1@gmail.com:${process.env.JIRA_PAT}`;
+
+            console.log("#JIRA", JIRA_TOKEN);
             
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
               headers: {
-                'Authorization': `Basic ${Buffer.from('vivekrajwe1@gmail.com:'process.env.JIRA_PAT).toString('base64')}`,
+                'Authorization': `Basic ${Buffer.from(JIRA_TOKEN).toString('base64')}`,
                 'Accept': 'application/json'
               }
             })
