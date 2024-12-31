@@ -24,13 +24,11 @@ jobs:
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
-
-            console.log("#process.env", process.env.JIRA_PAT, "sjhjks");
             
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
               headers: {
-                'Authorization': `Basic ${Buffer.from('vivekrajwe1@gmail.com:ATATT3xFfGF0mAUpA_rz0ATKEpxsyeVXhA-dOljGTdBdiaXxqKQOXpTsTgw7vxskLUUV1yHlWXbPQZRRzQEspMnGQOe5W6Qk--MvD2MSBOTav3A0pyAMS_xssFgC2MQQPneZdf5zJw_OeTZa_Mj4cymiKL7BAupJ8KYzOgG0EO8G__V1tsQyvZg=1B3E1309').toString('base64')}`,
+                'Authorization': `Basic ${Buffer.from(process.env.JIRA_PAT).toString('base64')}`,
                 'Accept': 'application/json'
               }
             })
