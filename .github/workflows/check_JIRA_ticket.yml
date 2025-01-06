@@ -39,7 +39,7 @@ jobs:
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
               headers: {
-                'Authorization': `Basic ${JIRA_TOKEN}`,
+                'Authorization': `Basic ${encodedJIRAToken}`,
                 'Accept': 'application/json'
               }
             })
