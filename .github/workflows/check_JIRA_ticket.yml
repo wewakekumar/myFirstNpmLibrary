@@ -24,6 +24,10 @@ jobs:
         with:
           script: |
             const JIRA_TOKEN = `vivekrajwe1@gmail.com:${process.env.JIRA_PAT}`;
+
+            fetch('https://jsonplaceholder.typicode.com/todos/1')
+              .then(response => response.json())
+              .then(json => console.log("#jsonResponsePlaceholder", json))
             
             fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
               method: 'GET',
