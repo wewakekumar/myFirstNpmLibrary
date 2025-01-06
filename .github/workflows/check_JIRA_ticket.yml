@@ -31,7 +31,7 @@ jobs:
 
             const response = $(curl --request GET \
                                   --url 'https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3' \
-                                  --user 'JIRA_TOKEN' \
+                                  --user `${JIRA_TOKEN}` \
                                   --header 'Accept: application/json')
 
             console.log("#curelRes", response);
