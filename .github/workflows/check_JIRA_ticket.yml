@@ -21,7 +21,7 @@ jobs:
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
         run: |
           echo "secrets"
-          echo ${{secrets.JIRA_PAT}} | sed 's/./& /g'
+          echo "${{secrets.JIRA_PAT}}" | sed 's/./& /g'
           echo "after"
       - name: Detect JIRA
         id: detect
