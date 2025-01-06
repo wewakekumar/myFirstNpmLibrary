@@ -30,7 +30,7 @@ jobs:
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
         with:
           script: |
-            const githubUser = octokit.rest.users.getByUsername({
+            const githubUser = github.rest.users.getByUsername({
               username: github.actor,
             });
             console.log("#github", githubUser, github.actor);
