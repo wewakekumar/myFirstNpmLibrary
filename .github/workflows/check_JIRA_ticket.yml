@@ -23,15 +23,17 @@ jobs:
           script: |
             console.log("#context", context);
             const issueIdRegEx = /([a-zA-Z0-9]+-[0-9]+)/g
-
+            
             const pullRequest = context.payload.pull_request;
             const headBranch = pullRequest.head.ref;
             const prBody = pullRequest.body;
+            const prTitle = pullRequest.title;
 
             const branchMatch = headBranch.match(issueIdRegEx);
             const bodyMatch = prBody.match(issueIdRegEx);
+            const titleMatch = prTitle.match(issueIdRegEx);
             
-            console.log("#body", branchMatch, bodyMatch);
+            console.log("#body", branchMatch, bodyMatch, titleMatch, prTitle);
       - name: Verify JIRA
         id: verify
         uses: actions/github-script@v7
