@@ -31,7 +31,8 @@ jobs:
         with:
           script: |
 
-            console.log("#context", JSON.stringify(context));
+            console.log("#context", context.head);
+            console.log("#body", context.body);
 
             console.log("#branch", branch);
             console.log("#commits", commits);
