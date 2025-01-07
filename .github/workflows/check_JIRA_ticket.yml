@@ -35,9 +35,13 @@ jobs:
             if (branchMatch || bodyMatch || titleMatch) {
               const JIRATickets = Array.from(new Set([...(branchMatch || []), ...(bodyMatch || []), ...(titleMatch || [])]));
 
+              const JIRATicket = JIRATickets[0];
+          
               if (JIRATickets.length > 1) {
-                core.setWarning(`More than one JIRA ticket found. We will be considering ${JIRATickets[0]} ticket id for the workflow. \nTickets found are: \n${JIRATickets.join("\n")}`);
+                core.setWarning(`More than one JIRA ticket found. We will be considering ${JIRATicket} ticket id for the workflow. \nTickets found are: \n${JIRATickets.join("\n")}`);
               }
+
+              core.setOutput(JIRATicket);
             } else {
               core.setFailed(`Couldn't find JIRA ticket in the PR`);
             }
