@@ -17,6 +17,8 @@ jobs:
     if: github.event.pull_request.draft == false
     steps:
       - name: Detect JIRA ticket
+        uses: actions/github-script@v7
+        id: detect
         with:
           script: |
             console.log("#context", context);
@@ -30,8 +32,8 @@ jobs:
             const bodyMatch = prBody.match(issueIdRegEx);
             
             console.log("#body", branchMatch, bodyMatch);
-      - name: Detect JIRA
-        id: detect
+      - name: Verify JIRA
+        id: verify
         uses: actions/github-script@v7
         env:
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
