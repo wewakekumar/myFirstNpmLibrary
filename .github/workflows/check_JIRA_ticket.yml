@@ -16,13 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
     steps:
-      - name: Set up secret file
-        env:
-          JIRA_PAT: ${{ secrets.JIRA_PAT }}
-        run: |
-          echo "secrets"
-          echo ${{ github.actor }}
-          echo "after"
+      - name: Detect JIRA ticket
+        with:
+          script: |
+            const issueIdRegEx = /([a-zA-Z0-9]+-[0-9]+)/g
+
+            const pullRequest = context.payload.pull_request;
+            const headBranch = pullRequest.head.ref;
+            const prBody = pullRequest.body;
+
+            const branchMatch = headBranch.match(issueIdRegEx);
+            const bodyMatch = prBody.match(issueIdRegEx);
+            
+            console.log("#body", branchMatch, bodyMatch);
       - name: Detect JIRA
         id: detect
         uses: actions/github-script@v7
@@ -30,11 +36,6 @@ jobs:
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
         with:
           script: |
-            const pullRequest = context.payload.pull_request;
-            const headBranch = pullRequest.head.ref;
-            const prBody = pullRequest.body;
-            console.log("#body", headBranch, prBody);
-
             const JIRA_TOKEN = `vivekrajwe1@gmail.com:${process.env.JIRA_PAT}`;
 
             const encodedJIRAToken = `${Buffer.from(JIRA_TOKEN).toString('base64')}`;
