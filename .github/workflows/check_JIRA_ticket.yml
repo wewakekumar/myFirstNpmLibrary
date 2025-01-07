@@ -32,7 +32,10 @@ jobs:
           script: |
 
             console.log("#context", context);
-            console.log("#body", context.body);
+            const pullRequest = context.payload.pull_request;
+            const headBranch = pullRequest.head;
+            const prBody = pullRequest.body;
+            console.log("#body", headBranch, prBody);
 
             const JIRA_TOKEN = `vivekrajwe1@gmail.com:${process.env.JIRA_PAT}`;
 
