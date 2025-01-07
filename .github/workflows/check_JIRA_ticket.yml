@@ -30,10 +30,8 @@ jobs:
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
         with:
           script: |
-
-            console.log("#context", context);
             const pullRequest = context.payload.pull_request;
-            const headBranch = pullRequest.head;
+            const headBranch = pullRequest.head.ref;
             const prBody = pullRequest.body;
             console.log("#body", headBranch, prBody);
 
