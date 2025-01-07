@@ -31,9 +31,7 @@ jobs:
         with:
           script: |
 
-            console.log("#context", context);
-            const branch = event.ref;
-            const commits = event.commits.map(c=>c.message).join(' ');
+            console.log("#context", JSON.stringify(context));
 
             console.log("#branch", branch);
             console.log("#commits", commits);
