@@ -41,7 +41,7 @@ jobs:
                 core.warning(`More than one JIRA ticket found. We will be considering ${JIRATicket} ticket id for the workflow. \nTickets found are: \n${JIRATickets.join("\n")}`);
               }
 
-              core.setOutput(JIRATicket);
+              core.exportVariable('JIRATicket', JIRATicket);
             } else {
               core.setFailed(`Couldn't find JIRA ticket in the PR`);
             }
