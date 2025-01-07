@@ -53,13 +53,11 @@ jobs:
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
         with:
           script: |
-
-            console.log("#outputs", process.env.JIRATicket);
-            const JIRA_TOKEN = `vivekrajwe1@gmail.com:${process.env.JIRA_PAT}`;
+            const JIRA_TOKEN = `${process.env.JIRA_PAT}`;
 
             const encodedJIRAToken = `${Buffer.from(JIRA_TOKEN).toString('base64')}`;
             
-            fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
+            fetch(`https://vivekrajwe1.atlassian.net/rest/api/2/issue/${process.env.JIRATicket}`, {
               method: 'GET',
               headers: {
                 'Authorization': `Basic ${encodedJIRAToken}`,
