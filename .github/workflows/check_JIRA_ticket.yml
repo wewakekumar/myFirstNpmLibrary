@@ -36,7 +36,7 @@ jobs:
               const JIRATickets = Array.from(new Set([...(branchMatch || []), ...(bodyMatch || []), ...(titleMatch || [])]));
 
               if (JIRATickets.length > 0) {
-                core.setFailed(`More than one JIRA ticket found. \n Tikcets found are ${JIRATickets.join("\n)}`);
+                core.setFailed(`More than one JIRA ticket found. \n Tikcets found are ${JIRATickets.join("\n")}`);
               }
             } else {
               core.setFailed(`Couldn't find JIRA tikcet in the PR`);
