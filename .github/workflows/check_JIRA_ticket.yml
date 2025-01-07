@@ -19,6 +19,7 @@ jobs:
       - name: Detect JIRA ticket
         with:
           script: |
+            console.log("#context", context);
             const issueIdRegEx = /([a-zA-Z0-9]+-[0-9]+)/g
 
             const pullRequest = context.payload.pull_request;
