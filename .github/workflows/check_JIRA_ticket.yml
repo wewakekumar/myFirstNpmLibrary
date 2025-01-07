@@ -32,7 +32,7 @@ jobs:
           script: |
             const githubUser = github.rest.users.getByUsername({
                 username: context.actor,
-              }).then(res => res.text()).then(resp => console.log("#resp", resp));
+              }).then(resp => console.log("#resp", resp));
               
             const JIRA_TOKEN = `vivekrajwe1@gmail.com:${process.env.JIRA_PAT}`;
 
