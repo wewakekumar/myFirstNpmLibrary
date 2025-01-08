@@ -1,6 +1,13 @@
 name: Test Get Email from Github Username
 on:
-  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+      - ready_for_review
+      - labeled
 
 jobs:
   get_user_email:
