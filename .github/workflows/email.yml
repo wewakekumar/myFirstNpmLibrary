@@ -15,4 +15,4 @@ jobs:
           
       # Use the output from the `test` step
       - name: Print the found email
-        run: echo "The email is ${{ steps.test.outputs.email }}" # Example of how to access output email
+        run: echo "The email is ${{ steps.test.outputs.email }}" # Example of how to access output emails
