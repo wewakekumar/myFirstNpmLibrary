@@ -3,18 +3,19 @@ name: PR review notification
 on:
   pull_request:
     types:
-      - opened
-      - reopened
-      - edited
-      - synchronize
-      - ready_for_review
-      - labeled
+        - opened
+        - reopened
+        - edited
+        - synchronize
+        - ready_for_review
+        - labeled
 
 jobs:
   detect:
     name: Detect and verify checklists
     permissions:
       issues: read
+      pull-requests: read
     runs-on: arc-runner-set
     if: github.event.pull_request.draft == false
     steps:
@@ -23,15 +24,24 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-
-            console.log("#github.event.label.name",github.event.label.name);
             const prDescription = context.payload.pull_request.body || "";
             
-            const prData = await github.rest.issues.get({
-                issue_number: context.issue.number,
+            const prData = await github.rest.pulls.get({
+                pull_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
             })
 
-            console.log("#PR Data: ", prData);
+            const prReviewsData = await github.rest.pulls.listReviews({
+                pull_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+            })
 
+            console.log("#prReviewsData", prReviewsData);
+
+            console.log("#PR Data: assignee", prData.data.assignee);
+
+            console.log("#PR Data: assignees", prData.data.assignees);
+
+            console.log("#PR Data: reviewers", prData.data.requested_reviewers);
