@@ -3,6 +3,11 @@ name: PR review notification
 on:
   pull_request:
     types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+      - ready_for_review
       - labeled
 
 jobs:
