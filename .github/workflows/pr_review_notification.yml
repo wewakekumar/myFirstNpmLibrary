@@ -16,13 +16,15 @@ jobs:
     permissions:
       issues: read
     runs-on: arc-runner-set
-    if: github.event.pull_request.draft == false && github.event.label.name == 'ready-for-review'
+    if: github.event.pull_request.draft == false
     steps:
       - name: Notification Trigger
         id: notify
         uses: actions/github-script@v7
         with:
           script: |
+
+            console.log("#github.event.label.name",github.event.label.name);
             const prDescription = context.payload.pull_request.body || "";
             
             const prData = await github.rest.issues.get({
