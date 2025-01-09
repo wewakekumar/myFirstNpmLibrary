@@ -17,11 +17,10 @@ jobs:
     if: github.event.pull_request.draft == false
     steps:
       - name: Check email of committed person
-        shell: bash
         id: committed-email-generator
-        run: |
-          email=$(git log -1 --pretty=format:"%ce" $GITHUB_SHA)
-          echo "::set-output name=email::${email}"
+        with:
+          script: |
+            github.rest.user.emails().then(res => console.log("#res", res);
       - name: Detect JIRA ticket
         uses: actions/github-script@v7
         id: detect
