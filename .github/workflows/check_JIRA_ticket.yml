@@ -16,19 +16,57 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
     steps:
-      - name: Detect JIRA
-        id: detect
+      - name: Check email of committed person
+        id: committed-email-generator
         uses: actions/github-script@v7
         with:
           script: |
-            const prDescription = context.payload.pull_request.body || "";
+            github.rest.user.emails().then(res => console.log("#res ", res));
+      - name: Detect JIRA ticket
+        uses: actions/github-script@v7
+        id: detect
+        with:
+          script: |
+            const issueIdRegEx = /([a-zA-Z0-9]+-[0-9]+)/g
+            
+            const pullRequest = context.payload.pull_request;
+            const headBranch = pullRequest.head.ref;
+            const prBody = pullRequest.body;
+            const prTitle = pullRequest.title;
 
-            console.log("#pr", prDescription);
+            const branchMatch = headBranch.match(issueIdRegEx);
+            const bodyMatch = prBody.match(issueIdRegEx);
+            const titleMatch = prTitle.match(issueIdRegEx);
 
-            fetch('https://vivekrajwe1.atlassian.net/rest/api/2/issue/CRM-3', {
+            if (branchMatch || bodyMatch || titleMatch) {
+              const JIRATickets = Array.from(new Set([...(branchMatch || []), ...(bodyMatch || []), ...(titleMatch || [])]));
+
+              const JIRATicket = JIRATickets[0];
+          
+              if (JIRATickets.length > 1) {
+                core.warning(`More than one JIRA ticket found. We will be considering ${JIRATicket} ticket id for the workflow. \nTickets found are: \n${JIRATickets.join("\n")}`);
+              }
+
+              core.exportVariable('JIRATicket', JIRATicket);
+            } else {
+              core.setFailed(`Couldn't find JIRA ticket in the PR`);
+            }
+            
+      - name: Verify JIRA
+        id: verify
+        uses: actions/github-script@v7
+        env:
+          JIRA_PAT: ${{ secrets.JIRA_PAT }}
+        with:
+          script: |
+            const JIRA_TOKEN = `${process.env.JIRA_PAT}`;
+
+            const encodedJIRAToken = `${Buffer.from(JIRA_TOKEN).toString('base64')}`;
+            
+            fetch(`https://vivekrajwe1.atlassian.net/rest/api/2/issue/${process.env.JIRATicket}`, {
               method: 'GET',
               headers: {
-                'Authorization': `Basic ${Buffer.from({{JIRA_PAT}}).toString('base64')}`,
+                'Authorization': `Basic ${encodedJIRAToken}`,
                 'Accept': 'application/json'
               }
             })
@@ -40,7 +78,6 @@ jobs:
               })
               .then(text => {
                 const jsonText = JSON.parse(text);
-                const assignee = jsonText.fields.assignee.emailAddress;
-                console.log("#assignee", assignee);
+                console.log("#json", jsonText);
               })
-              .catch(err => console.error(err));
+              .catch(err => console.error("#error", err));
