@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
       issues: read
     runs-on: arc-runner-set
-    if: github.event.pull_request.draft == false && ( github.base_ref == 'develop' || github.base_ref == 'master' )
+    if: github.event.pull_request.draft == false && ( github.base_ref == 'develop' || github.base_ref == 'main' )
     steps:
       - name: Checkbox Trigger
         id: detect
