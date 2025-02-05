@@ -51,7 +51,7 @@ jobs:
         run: |
           aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
 
-          Etag=`cat "dist-config.json" | jq '.ETag' | tr -d \"`
+          Etag=`cat "current-distribution-config.json" | jq '.ETag' | tr -d \"`
 
           echo "ETag: $Etag"
 
