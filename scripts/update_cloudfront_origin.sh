@@ -139,5 +139,3 @@ try_update() {
 }
 
 try_update()
-
-exit 1
