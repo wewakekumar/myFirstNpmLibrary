@@ -41,6 +41,6 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           echo "$VERSION"
-          ls
+          aws s3 sync ./dist "s3://zeptosaathi-static-assets/$VERSION"
         
   
