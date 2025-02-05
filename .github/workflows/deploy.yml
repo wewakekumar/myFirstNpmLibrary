@@ -42,9 +42,6 @@ jobs:
         run: |
           echo "$VERSION"
           aws s3 sync ./dist "s3://zeptosaathi-static-assets/$VERSION"
-      - name: Get cloudfront distribution
-        run: |
-          aws cloudfront get-distribution-config --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
       - name: Update AWS cloudfront origin and origin path
         env: 
           VERSION: ${{ inputs.version }}
