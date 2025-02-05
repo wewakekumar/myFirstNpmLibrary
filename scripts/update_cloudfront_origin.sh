@@ -138,4 +138,4 @@ try_update() {
     return 0
 }
 
-try_update()
+try_update
