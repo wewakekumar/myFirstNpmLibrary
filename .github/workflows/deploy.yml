@@ -37,8 +37,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-south-1
       - name: List s3 bucket objects
+        env: 
+          VERSION: ${{ inputs.version }}
         run: |
-          echo "$inputs.version"
+          echo "$VERSION"
           ls
         
   
