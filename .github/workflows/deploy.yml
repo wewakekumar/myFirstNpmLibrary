@@ -44,10 +44,11 @@ jobs:
           aws s3 sync ./dist "s3://zeptosaathi-static-assets/$VERSION"
       - name: Update CloudFront Origin Path
         run: |
-          ls
-          chmod +x ./scripts/update_cloudfront_origin.sh
-          ./scripts/update_cloudfront_origin.sh
+          aws cloudfront update-distribution \
+            --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
+            --origin Id=${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }},OriginPath=$VERSION"
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
           NEW_VERSION: ${{ github.event.inputs.version }}
           CLOUDFRONT_ORIGIN_ID: ${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }}
+          VERSION: ${{ inputs.version }}
