@@ -46,7 +46,7 @@ jobs:
         env: 
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
-          echo $CLOUDFRONT_DISTRIBUTION_ID | sed 's/./& /g'
+          echo "$CLOUDFRONT_DISTRIBUTION_ID" | sed 's/./& /g'
           aws cloudfront get-distribution-config --id CLOUDFRONT_DISTRIBUTION_ID
       - name: Update AWS cloudfront origin and origin path
         env: 
