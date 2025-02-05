@@ -36,7 +36,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-south-1
-      - name: List s3 bucket objects
+      - name: Push artifact to s3 bucket
         env: 
           VERSION: ${{ inputs.version }}
         run: |
@@ -65,3 +65,8 @@ jobs:
             --distribution-config "file://latest-distribution-config.json" \
             --if-match $Etag \
             > /dev/null
+      - name: Invalidate cloudfront cache
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/index.html"
