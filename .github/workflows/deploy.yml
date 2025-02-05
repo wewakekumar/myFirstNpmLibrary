@@ -42,5 +42,24 @@ jobs:
         run: |
           echo "$VERSION"
           aws s3 sync ./dist "s3://zeptosaathi-static-assets/$VERSION"
-        
+      - name: Update AWs cloudfront origin and origin path
+        env: 
+          VERSION: ${{ inputs.version }}
+          CLOUDFRONT_DISTRIBUTION_ID: $${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+            aws cloudfront update-distribution \
+            --id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-config '{
+                "Origins": {
+                    "Quantity": 1,
+                    "Items": [
+                        {
+                            "Id": "S3-origin",
+                            "DomainName": "zeptosaathi-static-assets.s3.amazonaws.com",
+                            "OriginPath": "/$VERSION",
+                        }
+                    ]
+                }
+            }' \
+            --if-match $(aws cloudfront get-distribution-config --id CLOUDFRONT_DISTRIBUTION_ID --query 'ETag' --output text)
   
