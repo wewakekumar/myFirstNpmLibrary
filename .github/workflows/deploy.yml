@@ -49,16 +49,16 @@ jobs:
             aws cloudfront update-distribution \
             --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
             --distribution-config '{
-                "Origins": {
-                    "Quantity": 1,
-                    "Items": [
-                        {
-                            "Id": "S3-origin",
-                            "DomainName": "zeptosaathi-static-assets.s3.amazonaws.com",
-                            "OriginPath": "/$VERSION",
-                        }
-                    ]
-                }
+                \"Origins\": {
+                  \"Quantity\": 1,
+                  \"Items\": [
+                      {
+                          \"Id\": \"S3-origin\",
+                          \"DomainName\": \"zeptosaathi-static-assets.s3.amazonaws.com\",
+                          \"OriginPath\": \"/$VERSION\",
+                      }
+                  ]
+              }
             }' \
             --if-match $(aws cloudfront get-distribution-config --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --query 'ETag' --output text)
   
