@@ -46,7 +46,7 @@ jobs:
         env: 
           CLOUDFRONT_DISTRIBUTION_ID: $${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
-          ws cloudfront get-distribution-config --id CLOUDFRONT_DISTRIBUTION_ID
+          aws cloudfront get-distribution-config --id CLOUDFRONT_DISTRIBUTION_ID
       - name: Update AWs cloudfront origin and origin path
         env: 
           VERSION: ${{ inputs.version }}
