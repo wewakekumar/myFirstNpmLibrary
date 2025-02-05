@@ -1,0 +1,33 @@
+name: Deploy to main
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Build version'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+        - latest
+        - 1.4.1
+        - 1.5.1
+        - 1.6.1
+        - 1.7.1
+        - 1.8.1
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install
+      - name: Build app
+        run: npm run build
+  
