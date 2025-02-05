@@ -50,3 +50,9 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
+
+          cat "current-distribution-config.json" | jq \
+            --arg targetOriginId $CLOUDFRONT_ORIGIN_ID \
+            --arg newOriginPath $VERSION \
+            '.Distribution.DistributionConfig | .Origins.Items = (.Origins.Items | map(if (.Id == $targetOriginId) then (.OriginPath = $newOriginPath) else . end))' \
+            > "latest-distribution-config.json"
