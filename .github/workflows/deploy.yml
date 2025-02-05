@@ -51,8 +51,17 @@ jobs:
         run: |
           aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
 
+          Etag=`cat "dist-config.json" | jq '.ETag' | tr -d \"`
+
+          echo "ETag: $Etag"
+
           cat "current-distribution-config.json" | jq \
             --arg targetOriginId $CLOUDFRONT_ORIGIN_ID \
             --arg newOriginPath $VERSION \
             '.Distribution.DistributionConfig | .Origins.Items = (.Origins.Items | map(if (.Id == $targetOriginId) then (.OriginPath = $newOriginPath) else . end))' \
             > "latest-distribution-config.json"
+
+          aws cloudfront update-distribution --id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-config "file://latest-distribution-config.json" \
+            --if-match $Etag \
+            > /dev/null
