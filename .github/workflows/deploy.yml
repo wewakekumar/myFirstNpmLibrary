@@ -49,4 +49,4 @@ jobs:
           CLOUDFRONT_ORIGIN_ID: ${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }}
           VERSION: ${{ inputs.version }}
         run: |
-          aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+          aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
