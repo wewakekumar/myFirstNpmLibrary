@@ -46,6 +46,7 @@ jobs:
         run: |
           chmod +x ./update_cloudfront_origin.sh
           ./update_cloudfront_origin.sh
+          ls
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
           NEW_VERSION: ${{ github.event.inputs.version }}
