@@ -63,5 +63,5 @@ jobs:
                     ]
                 }
             }' \
-            --if-match $(aws cloudfront get-distribution-config --id CLOUDFRONT_DISTRIBUTION_ID --query 'ETag' --output text)
+            --if-match $(aws cloudfront get-distribution-config --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --query 'ETag' --output text)
   
