@@ -38,6 +38,6 @@ jobs:
           aws-region: ap-south-1
       - name: List s3 bucket objects
         run: |
-          echo aws s3 ls "s3://zeptosaathi-static-assets"
+          aws s3 ls "s3://zeptosaathi-static-assets"
         
   
