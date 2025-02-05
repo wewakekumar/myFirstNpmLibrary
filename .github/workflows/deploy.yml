@@ -39,9 +39,10 @@ jobs:
       - name: Push artifact to s3 bucket
         env: 
           VERSION: ${{ inputs.version }}
+          S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
         run: |
           echo "$VERSION"
-          aws s3 sync ./dist "s3://zeptosaathi-static-assets/$VERSION"
+          aws s3 sync ./dist "s3://$S3_BUCKET_NAME/$VERSION"
       - name: Update CloudFront Origin Path
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
