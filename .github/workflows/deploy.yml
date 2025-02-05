@@ -38,6 +38,7 @@ jobs:
           aws-region: ap-south-1
       - name: List s3 bucket objects
         run: |
+          echo "$inputs.version"
           aws s3 ls "s3://zeptosaathi-static-assets"
         
   
