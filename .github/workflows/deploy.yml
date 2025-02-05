@@ -42,37 +42,11 @@ jobs:
         run: |
           echo "$VERSION"
           aws s3 sync ./dist "s3://zeptosaathi-static-assets/$VERSION"
-      - name: Update AWS cloudfront origin and origin path
-        env: 
-          VERSION: ${{ inputs.version }}
-          CLOUDFRONT_DISTRIBUTION_ID: "EIIN3MYIPJS6S"
-          NEW_ORIGIN_PATH: "/$VERSION"
-          CLOUDFRONT_ORIGIN_ID: "EWNOT0PYCQKDF"
+      - name: Update CloudFront Origin Path
         run: |
-            DIST_CONFIG_OLD_FILENAME="dist-config.json" # a temp file, which will be removed later
-            DIST_CONFIG_NEW_FILENAME="dist-config2.json" # a temp file, which will be removed later
-            
-            # 1) Get the current config, entirely, and put it in a file
-            aws cloudfront get-distribution --id $CLOUDFRONT_DISTRIBUTION_ID > $DIST_CONFIG_OLD_FILENAME
-            
-            # 2) Extract the Etag which we need this later for update
-            Etag=`cat $DIST_CONFIG_OLD_FILENAME | jq '.ETag' | tr -d \"`
-            
-            # 3) Modify the config as wished, for me I used `jq` extensively to update the "OriginPath" of the desired "originId"
-            cat $DIST_CONFIG_OLD_FILENAME | jq \
-                --arg targetOriginId $CLOUDFRONT_ORIGIN_ID \
-                --arg newOriginPath $NEW_ORIGIN_PATH \
-                '.Distribution.DistributionConfig | .Origins.Items = (.Origins.Items | map(if (.Id == $targetOriginId) then (.OriginPath = $newOriginPath) else . end))' \
-                > $DIST_CONFIG_NEW_FILENAME
-            
-            # 4) Update the distribution with the new file
-            aws cloudfront update-distribution --id $CLOUDFRONT_DISTRIBUTION_ID \
-                --distribution-config "file://${DIST_CONFIG_NEW_FILENAME}" \
-                --if-match $Etag \
-                > /dev/null
-            
-            # 5) Invalidate the distribution to pick up the changes
-            aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
-            
-            # 6) Clean up
-            rm -f $DIST_CONFIG_OLD_FILENAME $DIST_CONFIG_NEW_FILENAME
+          chmod +x ./scripts/update-cloudfront.sh
+          ./scripts/update-cloudfront.sh
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+          NEW_VERSION: ${{ github.event.inputs.version }}
+          CLOUDFRONT_ORIGIN_ID: ${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }}
