@@ -50,9 +50,11 @@ jobs:
 
           echo "ETag: $Etag"
 
-          echo "$DISTRIBUTION_CONFIG" | \
-            jq --arg lambda_function_config "$AWS_LAMBDA_FUNCTION_CONFIG" '.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations = $lambda_function_config' | \
-            jq '.DistributionConfig' > latest-distribution-config.json
+          cat "current-distribution-config.json" | jq \
+            --arg lambda_function_config "$AWS_LAMBDA_FUNCTION_CONFIG \
+            '.Distribution.DistributionConfig | 
+             .DefaultCacheBehavior.LambdaFunctionAssociations = $lambda_function_config' \
+            > "latest-distribution-config.json"
 
           aws cloudfront update-distribution --id $CLOUDFRONT_DISTRIBUTION_ID \
             --distribution-config "file://latest-distribution-config.json" \
