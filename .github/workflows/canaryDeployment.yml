@@ -50,10 +50,15 @@ jobs:
 
           echo "ETag: $Etag"
 
+          echo ${{ secrets.LAMBDA_FUNCTION_CONFIG }} > lambda-associations.json
+
           cat "current-distribution-config.json" | jq \
-            --arg lambda_function_config "$AWS_LAMBDA_FUNCTION_CONFIG \
+            --slurpfile associations lambda-associations.json \
             '.Distribution.DistributionConfig | 
-             .DefaultCacheBehavior.LambdaFunctionAssociations = $lambda_function_config' \
+             .DefaultCacheBehavior.LambdaFunctionAssociations = {
+                "Quantity": ($associations | .[0] | length),
+                "Items": $associations[0]
+              }' \
             > "latest-distribution-config.json"
 
           aws cloudfront update-distribution --id $CLOUDFRONT_DISTRIBUTION_ID \
