@@ -44,6 +44,7 @@ jobs:
           VERSION: ${{ inputs.version }}
           LAMBDA_FUNCTION_CONFIG: ${{ secrets.AWS_LAMBDA_FUNCTION_CONFIG}}
         run: |
+          echo latest-distribution-config.json
           aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
 
           Etag=`cat "current-distribution-config.json" | jq '.ETag' | tr -d \"`
