@@ -52,6 +52,8 @@ jobs:
 
           echo ${{ secrets.LAMBDA_FUNCTION_CONFIG }} > lambda-associations.json
 
+          cat lambda-associations.json
+
           cat "current-distribution-config.json" | jq \
             --slurpfile associations lambda-associations.json \
             '.Distribution.DistributionConfig | 
