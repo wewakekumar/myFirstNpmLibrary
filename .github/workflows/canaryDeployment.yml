@@ -56,6 +56,14 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-south-1
+      - name: Push artifact to s3 bucket
+        if: inputs.deploymentType == 'deploy' && inputs.deployTraffic == '0'
+        env: 
+          VERSION: ${{ inputs.version }}
+          S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+        run: |
+          echo "$VERSION"
+          aws s3 sync ./dist "s3://$S3_BUCKET_NAME/$VERSION"
       - name: Start deployment with 0% traffic
         if: inputs.deploymentType == 'deploy' && inputs.deployTraffic == '0'
         env:
