@@ -1,0 +1,60 @@
+name: Deploy to main
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Build version'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+        - latest
+        - 1.4.1
+        - 1.5.1
+        - 1.6.1
+        - 1.7.1
+        - 1.8.1
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install
+      - name: Build app
+        run: npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-south-1
+      - name: Attach lambda functions to the cloudfront
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+          NEW_VERSION: ${{ github.event.inputs.version }}
+          CLOUDFRONT_ORIGIN_ID: ${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }}
+          VERSION: ${{ inputs.version }}
+          LAMBDA_FUNCTION_CONFIG: ${{ secrets.AWS_LAMBDA_FUNCTION_CONFIG}}
+        run: |
+          aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
+
+          Etag=`cat "current-distribution-config.json" | jq '.ETag' | tr -d \"`
+
+          echo "ETag: $Etag"
+
+          echo "$DISTRIBUTION_CONFIG" | \
+            jq --arg lambda_function_config "$AWS_LAMBDA_FUNCTION_CONFIG" '.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations = $lambda_function_config' | \
+            jq '.DistributionConfig' > latest-distribution-config.json
+
+          aws cloudfront update-distribution --id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-config "file://latest-distribution-config.json" \
+            --if-match $Etag \
+            > /dev/null
