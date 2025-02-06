@@ -3,6 +3,26 @@ name: Deploy to canary
 on: 
   workflow_dispatch:
     inputs:
+      deploymentType:
+        description: 'Deployment type'
+        required: true
+        default: 'deploy'
+        type: choice
+        options:
+        - deploy
+        - rollback
+      deployTraffic:
+        description: 'Deploy traffic to new version'
+        required: true
+        default: '0'
+        type: choice
+        options:
+        - '0'
+        - '5'
+        - '10'
+        - '30'
+        - '50'
+        - '100'
       version:
         description: 'Build version'
         required: true
@@ -37,6 +57,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-south-1
       - name: Attach lambda functions to the cloudfront
+        if: inputs.deploymentType == 'deploy' && inputs.deployTraffic == '0'
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
           NEW_VERSION: ${{ github.event.inputs.version }}
@@ -69,6 +90,7 @@ jobs:
           rm current-distribution-config.json latest-distribution-config.json
 
       - name: Remove lambda functions association with the cloudfront
+        if: inputs.deploymentType == 'deploy' && inputs.deployTraffic == '100'
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
