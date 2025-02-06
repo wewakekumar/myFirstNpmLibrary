@@ -50,18 +50,7 @@ jobs:
 
           echo "ETag: $Etag"
 
-          echo "[
-                  {
-                      "LambdaFunctionARN": "arn:aws:lambda:us-east-1:545009856369:function:viewer-request:9",
-                      "EventType": "viewer-request",
-                      "IncludeBody": false
-                  },
-                  {
-                      "LambdaFunctionARN": "arn:aws:lambda:us-east-1:545009856369:function:origin-request:6",
-                      "EventType": "origin-request",
-                      "IncludeBody": false
-                  }
-              ]" > lambda-associations.json
+          echo $LAMBDA_FUNCTION_CONFIG > lambda-associations.json
 
           cat "current-distribution-config.json" | jq \
             --slurpfile associations lambda-associations.json \
