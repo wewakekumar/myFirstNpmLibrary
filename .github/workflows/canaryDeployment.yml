@@ -62,22 +62,21 @@ jobs:
           VERSION: ${{ inputs.version }}
           S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
         run: |
-          echo "$VERSION"
           aws s3 sync ./dist "s3://$S3_BUCKET_NAME/$VERSION"
       - name: Start deployment with 0% traffic
         if: inputs.deploymentType == 'deploy' && inputs.deployTraffic == '0'
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
-          NEW_VERSION: ${{ github.event.inputs.version }}
           CLOUDFRONT_ORIGIN_ID: ${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }}
           VERSION: ${{ inputs.version }}
           LAMBDA_FUNCTION_CONFIG: ${{ secrets.AWS_LAMBDA_FUNCTION_CONFIG}}
+          CANARY_SSM_KEY: ${{ secrets.AWS_CANARY_SSM_KEY }}
         run: |
-          aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
+          aws ssm put-parameter --name $CANARY_SSM_KEY --type "StringList" --value "true,0,$VERSION" --overwrite
+          
+          aws cloudfront get-distribution --id $CLOUDFRONT_DISTRIBUTION_ID > current-distribution-config.json
 
           Etag=`cat "current-distribution-config.json" | jq '.ETag' | tr -d \"`
-
-          echo "ETag: $Etag"
 
           echo $LAMBDA_FUNCTION_CONFIG > lambda-associations.json
 
@@ -97,6 +96,24 @@ jobs:
 
           rm current-distribution-config.json latest-distribution-config.json
 
+      - name: Increase traffic
+        if: inputs.deploymentType == 'deploy' && inputs.deployTraffic != '0' && && inputs.deployTraffic != '100'
+        env:
+          VERSION: ${{ inputs.version }}
+          DEPLOY_TRAFFIC: ${{ inputs.deployTraffic }}
+          CANARY_SSM_KEY: ${{ secrets.AWS_CANARY_SSM_KEY }}
+        run: |
+          aws ssm put-parameter --name $CANARY_SSM_KEY --type "StringList" --value "true,$DEPLOY_TRAFFIC,$VERSION" --overwrite
+
+      - name: Rollback
+        if: inputs.deploymentType == 'rollback'
+        env:
+          VERSION: ${{ inputs.version }}
+          DEPLOY_TRAFFIC: ${{ inputs.deployTraffic }}
+          CANARY_SSM_KEY: ${{ secrets.AWS_CANARY_SSM_KEY }}
+        run: |
+          aws ssm put-parameter --name $CANARY_SSM_KEY --type "StringList" --value "false,$DEPLOY_TRAFFIC,$VERSION" --overwrite
+
       - name: Promote
         if: inputs.deploymentType == 'deploy' && inputs.deployTraffic == '100'
         env:
@@ -107,9 +124,7 @@ jobs:
           aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
 
           Etag=`cat "current-distribution-config.json" | jq '.ETag' | tr -d \"`
-
-          echo "ETag: $Etag"
-
+          
           cat "current-distribution-config.json" | jq \
             --arg targetOriginId $CLOUDFRONT_ORIGIN_ID \
             --arg newOriginPath "/$VERSION" \
