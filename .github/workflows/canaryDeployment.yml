@@ -54,7 +54,6 @@ jobs:
 
           cat "current-distribution-config.json" | jq \
             --slurpfile associations lambda-associations.json \
-            echo "association: $associations[0]" \
             '.Distribution.DistributionConfig | 
              .DefaultCacheBehavior.LambdaFunctionAssociations = {
                 "Quantity": ($associations | .[0] | length),
