@@ -65,3 +65,30 @@ jobs:
             --distribution-config "file://latest-distribution-config.json" \
             --if-match $Etag \
             > /dev/null
+
+          rm current-distribution-config.json latest-distribution-config.json
+
+      - name: Remove lambda functions association with the cloudfront
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront get-distribution --id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} > current-distribution-config.json
+
+          Etag=`cat "current-distribution-config.json" | jq '.ETag' | tr -d \"`
+
+          echo "ETag: $Etag"
+
+          cat "current-distribution-config.json" | jq \
+            '.Distribution.DistributionConfig | 
+             .DefaultCacheBehavior.LambdaFunctionAssociations = {
+                "Quantity": 0,
+                "Items": []
+              }' \
+            > "latest-distribution-config.json"
+
+          aws cloudfront update-distribution --id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-config "file://latest-distribution-config.json" \
+            --if-match $Etag \
+            > /dev/null
+
+          rm current-distribution-config.json latest-distribution-config.json
