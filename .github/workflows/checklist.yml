@@ -13,7 +13,10 @@ on:
 jobs:
   detect:
     name: Detect and verify checklists
-    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: read
+    runs-on: arc-runner-set
     if: github.event.pull_request.draft == false && ( github.base_ref == 'develop' || github.base_ref == 'main' )
     steps:
       - name: Checkbox Trigger
@@ -22,9 +25,10 @@ jobs:
         with:
           script: |
             const prDescription = context.payload.pull_request.body || "";
-
             const checked = [];
             const unchecked = [];
+
+            const emptyInputChecklists = [];
             
             const lines = prDescription.split('\n');
             let isChecklist = false;
@@ -37,18 +41,38 @@ jobs:
               }
               
               if (isChecklist && line.startsWith('- [x]')) {
-                checked.push(line.substring(6).trim());
+                const checklistStr = line.substring(6).trim();
+                checked.push(checklistStr);
+                if (line.contains('XXX')) {
+                  emptyInputChecklists.push(checklistStr);
+                }
               }
-              if (isChecklist && line.startsWith('- [ ]') && isChecklist) {
+              if (isChecklist && line.startsWith('- [ ]')) {
                 unchecked.push(line.substring(6).trim());
               }
             }
-
             if (checked.length > 0) {
               console.log("Checked: ", checked);
             }
-
             if (unchecked.length > 0) {
               console.log("Unchecked: ", unchecked);
+              const issues = await github.rest.issues.get({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              })
+              const issueId = issues.data.id;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `> [!CAUTION] \n > You have [some checklists pending](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${context.issue.number}#issue-${issueId}). Please complete them and update the checklist.`
+              })
+                
               core.setFailed('Please follow the checklists and update the checklist.');
+            }
+
+            if (emptyInputChecklists.length > 0) {
+              core.setFailed(`Please update the checklists values by replacing XXX in the foloowing checklists: \n${emptyInputChecklists.join('\n')}`)
             }
