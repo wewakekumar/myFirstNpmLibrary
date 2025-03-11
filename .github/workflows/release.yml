@@ -33,6 +33,6 @@ jobs:
           uses: changesets/action@v1
           with:
             commit: "Release PR by changeset"
-            publish: npx changeset publish
+            publish: npm run build
           env:
             GITHUB_TOKEN: ${{ secrets.TOKEN }}
