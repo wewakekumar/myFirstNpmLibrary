@@ -10,7 +10,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "changeset": "changeset",
-    "version-packages": "changeset version && npm",
+    "version-packages": "changeset version && npm install",
     "release": "npm run build && changeset publish"
 
   },
