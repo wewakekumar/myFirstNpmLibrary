@@ -1,7 +1,6 @@
 {
   "name": "@wewakekumar/myfirstnpmlibrary",
   "version": "1.3.4",
-  "private": true,
   "description": "My first npm library",
   "main": "lib/Components/index.js",
   "scripts": {
