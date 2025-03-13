@@ -1,5 +1,12 @@
 # @wewakekumar/myfirstnpmlibrary
 
+## 1.3.4
+
+### Patch Changes
+
+- 5756050: Update package.json
+- a16a3da: Feat/test release
+
 ## 1.3.3
 
 ### Patch Changes
